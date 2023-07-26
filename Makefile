@@ -1,0 +1,2 @@
+run:
+	lime test flash
