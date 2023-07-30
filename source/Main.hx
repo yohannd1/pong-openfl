@@ -9,7 +9,10 @@ import openfl.events.KeyboardEvent;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
 import openfl.text.TextFormatAlign;
+
 import InputManager;
+import entities.Ball;
+import entities.Platform;
 
 @:nullSafety(Strict)
 class Main {
@@ -24,23 +27,21 @@ class Main {
 	}
 }
 
-class GameRoot extends Sprite {
-	private var input:InputManager;
-	private var isPaused:Bool;
+@:nullSafety(Strict)
+class Globals {
+	public static var input:InputManager = new InputManager();
+	public static var isPaused:Bool = true;
+}
 
-	private var platform1:Platform;
-	private var platform2:Platform;
-	private var ball:Ball;
+class GameRoot extends Sprite {
 	private var scorePlayer:Int;
 	private var scoreAI:Int;
 	private var scoreField:TextField;
 	private var messageField:TextField;
-	private var platformSpeed:Int;
 
 	public function new() {
 		super();
 
-		isPaused = true;
 		addEventListener(Event.ADDED_TO_STAGE, onAdd);
 	}
 
@@ -53,7 +54,7 @@ class GameRoot extends Sprite {
 		stage.addEventListener(Event.RESIZE, function(_) updateScreen());
 
 		// input handling
-		input = new InputManager();
+		var input = Globals.input;
 		input.enableKey(KeyCode.SPACE);
 		input.enableKey(KeyCode.UP);
 		input.enableKey(KeyCode.DOWN);
@@ -68,17 +69,17 @@ class GameRoot extends Sprite {
 	}
 
 	function initStage() {
-		platform1 = new Platform();
+		var platform1 = new Platform();
 		platform1.x = 5;
 		platform1.y = 200;
 		this.addChild(platform1);
 
-		platform2 = new Platform();
+		var platform2 = new Platform();
 		platform2.x = 480;
 		platform2.y = 200;
 		this.addChild(platform2);
 
-		ball = new Ball();
+		var ball = new Ball();
 		ball.x = 250;
 		ball.y = 250;
 		this.addChild(ball);
@@ -104,9 +105,8 @@ class GameRoot extends Sprite {
 
 		scorePlayer = 0;
 		scoreAI = 0;
-		platformSpeed = 7;
 
-		this.addEventListener(Event.ENTER_FRAME, function(_) onEnterFrame());
+		this.addEventListener(Event.ENTER_FRAME, function(_) onUpdate());
 	}
 
 	private function updateScreen() {
@@ -117,35 +117,21 @@ class GameRoot extends Sprite {
 		this.graphics.endFill();
 	}
 
-	function onEnterFrame():Void {
+	function onUpdate():Void {
+		var input = Globals.input;
 		input.update();
 
-		var keyUp = input.getHeld(KeyCode.UP);
-		var keyDown = input.getHeld(KeyCode.DOWN);
 		var keyPauseJP = input.getJustPressed(KeyCode.SPACE);
 
-		if (!isPaused) {
-			if (keyDown) {
-				platform1.y += platformSpeed;
-			} else if (keyUp) {
-				platform1.y -= platformSpeed;
-			}
-
-			if (platform1.y < 5)
-				platform1.y = 5;
-
-			if (platform1.y > 395)
-				platform1.y = 395;
-		}
 
 		if (keyPauseJP) {
-			isPaused = !isPaused;
+			Globals.isPaused = !Globals.isPaused;
 
-			if (isPaused) {
+			if (Globals.isPaused) {
 				scoreField.text = scorePlayer + ":" + scoreAI;
 			}
 
-			messageField.alpha = if (isPaused) 1.0 else 0.0;
+			messageField.alpha = if (Globals.isPaused) 1.0 else 0.0;
 		}
 	}
 }

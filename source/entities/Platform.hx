@@ -1,4 +1,4 @@
-package;
+package entities;
 
 import openfl.display.Sprite;
 
