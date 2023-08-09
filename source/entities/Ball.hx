@@ -1,8 +1,7 @@
 package entities;
 
-import Main.Globals;
+import Main;
 import InputManager.KeyCode;
-
 import openfl.display.Sprite;
 import openfl.events.Event;
 
@@ -20,16 +19,19 @@ class Ball extends Sprite {
 	}
 
 	function onUpdate():Void {
-		var input = Globals.input;
+		var gr = Main.gr;
 
-		var keyUp = input.getHeld(KeyCode.UP);
-		var keyDown = input.getHeld(KeyCode.DOWN);
+		var keyUp = gr.input.getHeld(KeyCode.UP);
+		var keyDown = gr.input.getHeld(KeyCode.DOWN);
 		var dirY = if (keyDown) 1.0 else if (keyUp) -1.0 else 0.0;
 
-		if (!Globals.isPaused) {
+		if (!gr.isPaused) {
 			y += dirY * Y_MOVE_SPEED;
-			if (y < 5) y = 5;
-			if (y > 395) y = 395;
+			if (y < 5)
+				y = 5;
+			if (y > 395)
+				y = 395;
 		}
 	}
 }
+

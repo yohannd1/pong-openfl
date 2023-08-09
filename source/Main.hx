@@ -6,42 +6,44 @@ import openfl.display.StageAlign;
 import openfl.events.Event;
 import openfl.Lib;
 import openfl.events.KeyboardEvent;
-import openfl.text.TextField;
-import openfl.text.TextFormat;
-import openfl.text.TextFormatAlign;
-
 import InputManager;
-import entities.Ball;
-import entities.Platform;
+import scenes.TitleScreen;
 
 @:nullSafety(Strict)
 class Main {
+	public static var gr:GameRoot = new GameRoot();
+
 	public static function main() {
-		var stage = Lib.current.stage;
+		final stage = Lib.current.stage;
 
 		// stage scaling
 		stage.scaleMode = StageScaleMode.SHOW_ALL;
 		stage.align = StageAlign.TOP_LEFT;
 
-		Lib.current.addChild(new GameRoot());
+		Lib.current.addChild(gr);
+
+		final title_screen = new TitleScreen();
+		gr.setCurrentScene(title_screen);
 	}
 }
 
 @:nullSafety(Strict)
 class Globals {
-	public static var input:InputManager = new InputManager();
 	public static var isPaused:Bool = true;
+	public static var scoreAI:Int = 0;
+	public static var scorePlayer:Int = 0;
 }
 
 class GameRoot extends Sprite {
-	private var scorePlayer:Int;
-	private var scoreAI:Int;
-	private var scoreField:TextField;
-	private var messageField:TextField;
+	public final screen_size = new Vec2(800, 600);
+
+	private var current_scene:Scene;
+
+	public var input:InputManager = new InputManager();
+	public var isPaused:Bool = false;
 
 	public function new() {
 		super();
-
 		addEventListener(Event.ADDED_TO_STAGE, onAdd);
 	}
 
@@ -54,62 +56,13 @@ class GameRoot extends Sprite {
 		stage.addEventListener(Event.RESIZE, function(_) updateScreen());
 
 		// input handling
-		var input = Globals.input;
-		input.enableKey(KeyCode.SPACE);
-		input.enableKey(KeyCode.UP);
-		input.enableKey(KeyCode.DOWN);
 		stage.addEventListener(KeyboardEvent.KEY_DOWN, function(ev) input.handleKeyEvent(true, ev.keyCode));
 		stage.addEventListener(KeyboardEvent.KEY_UP, function(ev) input.handleKeyEvent(false, ev.keyCode));
 
-		#if ios
-		haxe.Timer.delay(initStage, 100); // iOS 6
-		#else
-		initStage();
-		#end
+		addEventListener(Event.ENTER_FRAME, function(_) onUpdate());
 	}
 
-	function initStage() {
-		var platform1 = new Platform();
-		platform1.x = 5;
-		platform1.y = 200;
-		this.addChild(platform1);
-
-		var platform2 = new Platform();
-		platform2.x = 480;
-		platform2.y = 200;
-		this.addChild(platform2);
-
-		var ball = new Ball();
-		ball.x = 250;
-		ball.y = 250;
-		this.addChild(ball);
-
-		var scoreFormat = new TextFormat("Verdana", 24, 0xbbbbbb, true);
-		scoreFormat.align = TextFormatAlign.CENTER;
-		scoreField = new TextField();
-		addChild(scoreField);
-		scoreField.width = 500;
-		scoreField.y = 30;
-		scoreField.defaultTextFormat = scoreFormat;
-		scoreField.selectable = false;
-
-		var messageFormat = new TextFormat("Verdana", 18, 0xbbbbbb, true);
-		messageFormat.align = TextFormatAlign.CENTER;
-		messageField = new TextField();
-		addChild(messageField);
-		messageField.width = 500;
-		messageField.y = 450;
-		messageField.defaultTextFormat = messageFormat;
-		messageField.selectable = false;
-		messageField.text = "Press SPACE to start\nUse ARROW KEYS to move your platform";
-
-		scorePlayer = 0;
-		scoreAI = 0;
-
-		this.addEventListener(Event.ENTER_FRAME, function(_) onUpdate());
-	}
-
-	private function updateScreen() {
+	function updateScreen() {
 		var stage = Lib.current.stage;
 
 		this.graphics.beginFill(0x000000);
@@ -117,22 +70,30 @@ class GameRoot extends Sprite {
 		this.graphics.endFill();
 	}
 
+	public function setCurrentScene(s:Scene):Void {
+		removeChildren();
+
+		current_scene = s;
+		addChild(s);
+		s.onAdd();
+	}
+
 	function onUpdate():Void {
-		var input = Globals.input;
 		input.update();
 
-		var keyPauseJP = input.getJustPressed(KeyCode.SPACE);
-
-
-		if (keyPauseJP) {
-			Globals.isPaused = !Globals.isPaused;
-
-			if (Globals.isPaused) {
-				scoreField.text = scorePlayer + ":" + scoreAI;
-			}
-
-			messageField.alpha = if (Globals.isPaused) 1.0 else 0.0;
+		if (current_scene != null) {
+			current_scene.onUpdate();
 		}
 	}
+}
+
+abstract class Scene extends Sprite {
+	public function new() {
+		super();
+	}
+
+	abstract public function onAdd():Void;
+
+	abstract public function onUpdate():Void;
 }
 

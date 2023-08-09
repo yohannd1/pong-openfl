@@ -5,9 +5,11 @@ But there is a bunch of stuff to dodge!
 Target resolution: 800x600 px
 
 Checklist:
-  ( ) Input manager
-  ( ) Proper scaling (idk what's going on)
+  (x) Input manager
+  (x) Scene system
+
   ( ) Player movement n stuff
+  ( ) Proper scaling (idk what's going on)
 
   ( ) Enemies
   ( ) Bosses
