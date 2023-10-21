@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-	<meta title="DummyProjName" package="com.sample.dummyprojname" version="1.0.0" company="Company Name" />
-	<app main="Main" path="export" file="DummyProjName" />
-	<source path="source" />
-	<haxelib name="openfl" />
-	<assets path="assets" />
+    <meta title="DummyProjName" package="com.sample.dummyprojname" version="1.0.0" company="Company Name" />
+    <app main="Main" path="export" file="DummyProjName" />
+    <source path="source" />
+    <haxelib name="openfl" />
+    <assets path="assets" />
+    <config:android build-tools-version="26" target-sdk-version="26" />
 </project>

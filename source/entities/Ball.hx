@@ -7,12 +7,15 @@ import openfl.events.Event;
 
 class Ball extends Sprite {
 	public static final Y_MOVE_SPEED = 7.0;
+	public static final RADIUS = 10.0;
 
 	public function new() {
 		super();
 
 		this.graphics.beginFill(0xffffff);
-		this.graphics.drawCircle(0, 0, 10);
+
+		final p = -RADIUS / 2;
+		this.graphics.drawCircle(p, p, RADIUS);
 		this.graphics.endFill();
 
 		this.addEventListener(Event.ENTER_FRAME, function(_) onUpdate());
@@ -27,11 +30,9 @@ class Ball extends Sprite {
 
 		if (!gr.isPaused) {
 			y += dirY * Y_MOVE_SPEED;
-			if (y < 5)
-				y = 5;
-			if (y > 395)
-				y = 395;
+
+			final ss = gr.screen_size;
+			y = if (y < 0) 0 else if (y > ss.y) ss.y else y;
 		}
 	}
 }
-
