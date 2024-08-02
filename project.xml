@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project>
-    <meta title="DummyProjName" package="com.sample.dummyprojname" version="1.0.0" company="Company Name" />
-    <app main="Main" path="export" file="DummyProjName" />
+    <meta title="PongOpenFL" package="org.yohannd1.pong-openfl" version="0.0.1" company="yohannd1" />
+    <app main="Main" path="export" file="PongOpenFL" />
     <source path="source" />
     <haxelib name="openfl" />
     <assets path="assets" />
