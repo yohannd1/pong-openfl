@@ -8,6 +8,7 @@ import openfl.Lib;
 import openfl.events.KeyboardEvent;
 import InputManager;
 import scenes.TitleScreen;
+import math.Vec2;
 
 @:nullSafety(Strict)
 class Main {

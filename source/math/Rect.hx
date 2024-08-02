@@ -1,3 +1,4 @@
+package math;
 import Vec2;
 
 class Rect {
